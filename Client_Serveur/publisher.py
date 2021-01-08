@@ -9,7 +9,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("test/testdevice") 
+    client.subscribe("test/testdevice")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -27,5 +27,5 @@ while client.loop() == 0:
     #0-1000 Deira Dubai
     #1000-1050 Abu Shagara
     #1050-1150 University City
-    client.publish("test/testdevice","Pulblisher Side" ,0,False)
+    client.publish("test/testdevice","Publisher Side: souhail !" ,0,False)
     time.sleep(1)# sleep for 1 second before next call
