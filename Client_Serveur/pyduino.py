@@ -8,7 +8,7 @@ class Arduino():
     Models an Arduino connection
     """
 
-    def __init__(self, serial_port='/dev/ttyACM3', baud_rate=9600,
+    def __init__(self, serial_port='/dev/ttyACM0', baud_rate=9600,
             read_timeout=5):
         """
         Initializes the serial connection to the Arduino board
@@ -50,15 +50,15 @@ class Arduino():
         """
         command = (''.join(('WD', str(pin_number), ':',
             str(digital_value)))).encode()
-        self.conn.write(command) 
-     
+        self.conn.write(command)
+
     def analog_read(self, pin_number):
         """
         Performs an analog read on pin_number and returns the value (0 to 1023)
         Internally sends b'RA{pin_number}' over the serial connection
         """
         command = (''.join(('RA', str(pin_number)))).encode()
-        self.conn.write(command) 
+        self.conn.write(command)
         line_received = self.conn.readline().decode().strip()
         header, value = line_received.split(':') # e.g. A4:1
         if header == ('A'+ str(pin_number)):
@@ -73,12 +73,12 @@ class Arduino():
         """
         command = (''.join(('WA', str(pin_number), ':',
             str(analog_value)))).encode()
-        self.conn.write(command) 
+        self.conn.write(command)
 
     def close(self):
         """
         To ensure we are properly closing our connection to the
-        Arduino device. 
+        Arduino device.
         """
         self.conn.close()
         print ('Connection to Arduino closed')

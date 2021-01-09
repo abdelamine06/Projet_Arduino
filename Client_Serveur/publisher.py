@@ -5,14 +5,15 @@ import random
 import game
 import player
 from pyduino import *
+import math
+
 
 
 
 if __name__ == '__main__':
 
     game = game.game(1)
-    debut=time.time()
-
+    value =0
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(client, userdata, flags, rc):
@@ -37,9 +38,9 @@ if __name__ == '__main__':
 
     def lance_des():
         value = random.randint(1,6)
-        i = 2 
+        i = 2
         while(i<value+2):
-            a.digital_write(i,1) # turn LED on 
+            a.digital_write(i,1) # turn LED on
             i+=1
 
         return value
@@ -52,66 +53,72 @@ if __name__ == '__main__':
         Temp = ( Temp*9.0 )/5.0 + 32.0
 
         return Temp
-  
+
+    def setup_ultrason():
+        a.set_pin_mode(8,'I')
+        a.set_pin_mode(9,'O')
+
+    def setup_bouton():
+        a.set_pin_mode(9,'I')
+
 
     def joue():
 
         if(game._mode == "ultrason"):
-            a.set_pin_mode(8,'O')
-            a.set_pin_mode(9,'I')
-            a.digital_write(8, 0)
-            time.sleep(1)
+            a.digital_write(9, 0)
+            time.sleep(0.000003)#delayMicroseconds(3)
             a.digital_write(9, 1)
-
-            temps = time.time() - debut
-            distance = temps*0.034/2
-
-            print("la distance est : ", distance)
-            
+            time.sleep(0.00001)#delayMicroseconds(10)
+            a.digital_write(9, 0)
+            stop = 0
+            v = 0
+            while stop == 0:
+                if(a.digital_read(8) == 1):
+                    debut=time.time()
+                    v = 1
+                if (a.digital_read(8) == 0 and v == 1):
+                    temps = time.time() - debut
+                    stop = 1
+                    v = 0
+            distance = temps*100*0.034/2
             if(distance<5):
-                print("je lance le des Mode ultrason !!!!")
                 value = lance_des()
-
                 return value
 
-        if(game._mode == "button"): 
-            
-            a.set_pin_mode(9,'I')
-
+        elif(game._mode == "bouton"):
             if(a.digital_read(9) == 1):
-
-                print("je lance le des Mode button !!!!")
                 value = lance_des()
-
                 return value
 
-        if(game._mode == "lumiere"):
+        elif(game._mode == "lumiere"):
+              luminosite1 = a.analog_read(0)
+              print(luminosite1)
+              time.sleep(0.1)
+              luminosite2 = a.analog_read(0)
+              print(luminosite2)
+              if( abs(luminosite2-luminosite1) > 10  ):
+                  value = lance_des()
+                  return value
 
-            if(a.digital_read(9) < 500):
-                print("je lance le des Mode lumiere !!!!")
+        elif(game._mode == "temperature"):
+            time.sleep(1)
+            val1 = a.analog_read(0)
+            print(val1)
+            val2 = a.analog_read(0)
+            if(abs(val1-val2) > 1 ):
                 value = lance_des()
-
                 return value
 
-        if(game._mode == "temperature"):
-
-            val = a.analog_read(2)
-            temp = thermistor(val)
-
-            if(temp > -40.57):
-                print("je lance le des Mode lumiere !!!!")
-                value = lance_des()
-
-                return value
+        return 0
 
 
     print('[Arduino] Establishing connection to Arduino...')
-    
+
     # if your arduino was running on a serial port other than '/dev/ttyACM0/'
     # declare: a = Arduino(serial_port='/dev/ttyXXXX')
     a = Arduino(serial_port='/dev/ttyACM0')
-    
-    # sleep to ensure ample time for computer to make serial connection 
+
+    # sleep to ensure ample time for computer to make serial connection
     time.sleep(3)
     print('[Arduino] established!')
 
@@ -125,23 +132,40 @@ if __name__ == '__main__':
     client.on_message = on_message
     client.connect("test.mosquitto.org")
 
-    time.sleep(1)
-            
+    #time.sleep(1)
+
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
     # manual interface.
 
-    stop = 0
-    while client.loop() == 0:
+    if(game._mode == "ultrason"):
+        print("je lance le des Mode Ultrason !!!!")
+        setup_ultrason()
 
-        
+    elif(game._mode == "bouton"):
+        print("je lance le des Mode Bouton !!!!")
+        setup_bouton();
+
+    elif(game._mode == "lumiere"):
+        print("je lance le des Mode Lumiere !!!!")
+
+    elif(game._mode == "temperature"):
+        print("je lance le des Mode Temperature !!!!")
+
+
+    while  value == 0 :
+        value = joue()
+
+    print("Valeur recupere : ", value)
+
+    while client.loop() == 0 :
         if game._status == "wait" :
             client.publish("test/testdevice", "wait",0,False)
-        if game._status == "playing" : 
+        if game._status == "playing" :
             client.publish("test/testdevice", "playing",0,False)
 
 
-        time.sleep(1)# sleep for 1 second before next call
+            time.sleep(1)
     print ('CLOSING...')
-    a.close()                     
+    a.close()

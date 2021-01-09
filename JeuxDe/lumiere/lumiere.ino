@@ -1,4 +1,4 @@
-const int ECART=0;
+const int ECART=20;
 const int TEMPO=2000;
 int stop = 0;
 void setup(){
@@ -9,6 +9,7 @@ void setup(){
 }
 void loop(){
   int luminosite1=analogRead(0);
+  delay(100);
   int luminosite2=analogRead(0);  
 
   // tester si un capteur est passer pour lancer le jeux

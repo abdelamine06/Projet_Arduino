@@ -13,7 +13,7 @@ void setup(){
   Serial.begin(9600);
   //Ultrason
   pinMode(butonOut, OUTPUT); 
-  pinMode(butonIn, INPUT); 
+  pinMode(butonIn, INPUT);
   
   randomSeed(analogRead(1));
   for(int i=2;i<=7;i++){
@@ -22,7 +22,7 @@ void setup(){
 }
 void loop()
 {
-  
+    
   digitalWrite(butonOut, LOW);
   delayMicroseconds(3);
   digitalWrite(butonOut, HIGH);
