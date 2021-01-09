@@ -3,6 +3,7 @@ import time
 import json
 import random
 import game
+import player
 from pyduino import *
 
 
@@ -116,6 +117,8 @@ if __name__ == '__main__':
 
     # initialize the digital pin as output
     #a.set_pin_mode(3,'O')
+    player = player.player(1)
+
 
     client = mqtt.Client(client_id="Paul Serv")
     client.on_connect = on_connect
