@@ -1,8 +1,20 @@
+import json
+
 class player:
-    def __init__(self, id):
-        self._id = id
-        self._players = {}
-        self._nbPlayerNeeded = 4
-        self._resMini = 12
-        self._status = "wait" # wait for players
-        self._mode = "button"
+
+    def __init__(self,player, score):
+        self._player = player
+        self._score = score
+        self._status = "wait" 
+
+    def setPlayer(self , player):
+        self._player = player
+        # ne pas ajouter à gerer plus tard.
+
+
+    def setScore(self, score):
+        self._score = score
+
+    def setStatus(self, status):
+        self._status = status
+    
