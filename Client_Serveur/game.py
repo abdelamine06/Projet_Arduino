@@ -8,7 +8,7 @@ class game:
         self._nbPlayerNeeded = 4
         self._resMini = 12
         self._status = "wait" # wait for players
-        self._mode = "button"
+        self._mode = "bouton"
 
 
     def setPlayer(self , player):
@@ -27,6 +27,3 @@ class game:
 
     def asDict(self):
         return { 'id' : self._id , 'players' : self._players , 'nbPlayerNeeded' : self._nbPlayerNeeded, 'resMini' : self._resMini}
-    
-
-    
