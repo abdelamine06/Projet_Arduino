@@ -54,3 +54,5 @@ dkms.conf
 # Editor
 
 *.vscode/*
+
+Client_Serveur/__pycache__

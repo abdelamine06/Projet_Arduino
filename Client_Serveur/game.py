@@ -8,6 +8,7 @@ class game:
         self._nbPlayerNeeded = 4
         self._resMini = 12
         self._status = "wait" # wait for players
+        self._mode = "button"
 
 
     def setPlayer(self , player):
