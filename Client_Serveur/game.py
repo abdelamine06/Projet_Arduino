@@ -2,14 +2,12 @@ import json
 
 class game:
 
-    def __init__(self, id):
-        self._id = id
+    def __init__(self,player):
         self._players = {}
+        self._player = player
         self._nbPlayerNeeded = 4
         self._resMini = 12
-        self._status = "wait" # wait for players
-
-
+        self._status = "playing" # wait for players
     def setPlayer(self , player):
         if ( len(self._players) < self._nbPlayerNeeded) :
             self._players.update(player)
